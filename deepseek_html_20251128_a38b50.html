@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Ujian Petualangan Sejarah</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .screen {
+            padding: 40px;
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .game-icon {
+            font-size: 80px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #219a52;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+        }
+
+        .btn-warning:hover {
+            background: #d35400;
+        }
+
+        .question-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #3498db;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .option:hover {
+            border-color: #3498db;
+            background: #f0f8ff;
+        }
+
+        .option.selected {
+            border-color: #27ae60;
+            background: #d5f4e6;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            transition: width 0.3s;
+        }
+
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2c3e50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 20px 0;
+        }
+
+        .score-text {
+            text-align: center;
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .teacher-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .teacher-table th,
+        .teacher-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .teacher-table th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+
+        .teacher-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .adventure-step {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .screen {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .header-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Screen 1: Login Siswa -->
+        <div id="loginScreen" class="screen active">
+            <h1>🎮 Petualangan Sejarah Indonesia</h1>
+            <div class="game-icon">⚔️</div>
+            <h2>Masuk Sebagai Petualang</h2>
+            
+            <div class="form-group">
+                <label for="studentName">Nama Petualang:</label>
+                <input type="text" id="studentName" placeholder="Masukkan nama Anda">
+            </div>
+            
+            <div class="form-group">
+                <label for="studentClass">Kelas:</label>
+                <input type="text" id="studentClass" placeholder="Contoh: X IPS 1">
+            </div>
+            
+            <button class="btn" onclick="startAdventure()">🚀 Mulai Petualangan</button>
+            <button class="btn btn-warning" onclick="showScreen('teacherLoginScreen')">👨‍🏫 Login Guru</button>
+        </div>
+
+        <!-- Screen 2: Login Guru -->
+        <div id="teacherLoginScreen" class="screen">
+            <h1>👨‍🏫 Dashboard Guru</h1>
+            <div class="game-icon">📊</div>
+            
+            <div class="form-group">
+                <label for="teacherUsername">Username:</label>
+                <input type="text" id="teacherUsername" placeholder="Masukkan username">
+            </div>
+            
+            <div class="form-group">
+                <label for="teacherPassword">Password:</label>
+                <input type="password" id="teacherPassword" placeholder="Masukkan password">
+            </div>
+            
+            <button class="btn btn-success" onclick="teacherLogin()">🔐 Login</button>
+            <button class="btn btn-danger" onclick="showScreen('loginScreen')">↩️ Kembali</button>
+        </div>
+
+        <!-- Screen 3: Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="header-info">
+                <div id="studentInfo">Petualang: - | Kelas: -</div>
+                <div id="progressText">Pertanyaan 1/40</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div id="progress" class="progress" style="width: 2.5%"></div>
+            </div>
+            
+            <div class="adventure-step" id="adventureStep">🏞️ Memulai Perjalanan...</div>
+            
+            <div class="question-container">
+                <div class="question-text" id="questionText">Memuat pertanyaan...</div>
+                <div class="options-container" id="optionsContainer">
+                    <!-- Opsi akan diisi oleh JavaScript -->
+                </div>
+            </div>
+            
+            <button class="btn" id="nextButton" onclick="nextQuestion()" disabled>⏭️ Lanjutkan Petualangan</button>
+        </div>
+
+        <!-- Screen 4: Results Screen -->
+        <div id="resultsScreen" class="screen">
+            <h1>🏆 Petualangan Selesai!</h1>
+            <div class="game-icon">🎯</div>
+            
+            <div id="studentResultInfo" style="text-align: center; margin-bottom: 20px;"></div>
+            
+            <div class="score-display" id="finalScore">0/40</div>
+            <div class="score-text" id="scorePercentage">0%</div>
+            <div class="score-text" id="scoreRemark">Memuat hasil...</div>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <strong>Jawaban Benar</strong>
+                    <div id="correctAnswers">0</div>
+                </div>
+                <div class="result-card">
+                    <strong>Jawaban Salah</strong>
+                    <div id="wrongAnswers">0</div>
+                </div>
+                <div class="result-card">
+                    <strong>Persentase</strong>
+                    <div id="percentage">0%</div>
+                </div>
+                <div class="result-card">
+                    <strong>Status</strong>
+                    <div id="status">-</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-success" onclick="showAnswerDetails()">📋 Lihat Detail Jawaban</button>
+            <button class="btn" onclick="restartGame()">🔄 Main Lagi</button>
+            <button class="btn btn-danger" onclick="showScreen('loginScreen')">🏠 Menu Utama</button>
+        </div>
+
+        <!-- Screen 5: Teacher Dashboard -->
+        <div id="teacherDashboard" class="screen">
+            <h1>📊 Dashboard Guru</h1>
+            <div class="game-icon">👨‍🏫</div>
+            
+            <h2>Hasil Ujian Semua Siswa</h2>
+            
+            <table class="teacher-table">
+                <thead>
+                    <tr>
+                        <th>Nama Siswa</th>
+                        <th>Kelas</th>
+                        <th>Nilai</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable">
+                    <!-- Data akan diisi oleh JavaScript -->
+                </tbody>
+            </table>
+            
+            <button class="btn btn-warning" onclick="refreshResults()">🔄 Refresh Data</button>
+            <button class="btn btn-danger" onclick="showScreen('loginScreen')">🚪 Logout</button>
+        </div>
+
+        <!-- Screen 6: Answer Details -->
+        <div id="answerDetailsScreen" class="screen">
+            <h1>📋 Detail Jawaban</h1>
+            <div style="max-height: 400px; overflow-y: auto; margin: 20px 0;">
+                <div id="answerDetails">
+                    <!-- Detail jawaban akan diisi oleh JavaScript -->
+                </div>
+            </div>
+            <button class="btn" onclick="showScreen('resultsScreen')">↩️ Kembali ke Hasil</button>
+        </div>
+    </div>
+
+    <script>
+        // Data soal ujian lengkap 40 soal
+        const questions = [
+            {
+                question: "1. Istilah 'mutiara dari timur' yang diburu bangsa Barat merujuk pada…",
+                options: ["A. Emas Papua", "B. Hasil kebun nusantara", "C. Rempah-rempah Maluku", "D. Batu mulia Kalimantan", "E. Kapas dan rotan Sulawesi"],
+                answer: 2
+            },
+            {
+                question: "2. Faktor utama bangsa Barat datang ke Indonesia pada abad ke-16 adalah…",
+                options: ["A. Penyebaran agama Hindu", "B. Mencari tanah jajahan untuk penduduk", "C. Keinginan membeli kapal Indonesia", "D. Mencari rempah-rempah dengan harga murah", "E. Melakukan penelitian ilmu alam"],
+                answer: 3
+            },
+            {
+                question: "3. Politik monopoli VOC bertujuan untuk…",
+                options: ["A. Mengurangi persaingan dagang di Eropa", "B. Menguasai seluruh sumber kekayaan alam Indonesia", "C. Mengontrol harga rempah agar tetap tinggi", "D. Membuka perdagangan bebas di Asia", "E. Memperluas wilayah kekuasaan VOC"],
+                answer: 2
+            },
+            {
+                question: "4. Salah satu hak istimewa VOC adalah hak oktroi, yaitu…",
+                options: ["A. Hak memiliki mata uang sendiri", "B. Hak melakukan hubungan diplomatik dan memajaki rakyat", "C. Hak menjual koloni kepada negara lain", "D. Hak mengatur pendidikan di Nusantara", "E. Hak membentuk kerajaan sendiri"],
+                answer: 1
+            },
+            {
+                question: "5. Penyebab utama kebangkrutan VOC adalah…",
+                options: ["A. Terlalu banyak membangun infrastruktur", "B. Perang melawan Raja Ternate", "C. Korupsi besar-besaran di internal VOC", "D. Kalah bersaing dengan Inggris", "E. Tidak memiliki kantor dagang di India"],
+                answer: 2
+            },
+            {
+                question: "6. Setelah VOC dibubarkan, wilayah Indonesia berada di bawah kendali…",
+                options: ["A. Kerajaan Inggris", "B. Pemerintah Belanda", "C. Perancis", "D. Spanyol", "E. Portugis"],
+                answer: 1
+            },
+            {
+                question: "7. Sistem tanam paksa (Cultuurstelsel) diberlakukan oleh…",
+                options: ["A. Daendels", "B. Van den Bosch", "C. Raffles", "D. Pieter Both", "E. Van Hoorn"],
+                answer: 1
+            },
+            {
+                question: "8. Dampak utama Cultuurstelsel bagi pemerintah kolonial adalah…",
+                options: ["A. Kerugian besar bagi kas Belanda", "B. Meningkatnya pemasukan negara Belanda", "C. Berkurangnya tenaga kerja Jawa", "D. Perekonomian Indonesia tumbuh pesat", "E. Timbulnya persaingan antar petani"],
+                answer: 1
+            },
+            {
+                question: "9. Perlawanan rakyat Maluku terhadap VOC dipimpin oleh…",
+                options: ["A. Sultan Agung", "B. Sultan Hasanuddin", "C. Pattimura", "D. Cut Nyak Dien", "E. Teuku Umar"],
+                answer: 2
+            },
+            {
+                question: "10. Perang Diponegoro dipicu oleh…",
+                options: ["A. Pajak hasil panen yang sangat tinggi", "B. Penentuan batas tanah yang merugikan Diponegoro", "C. Perebutan kekuasaan di Keraton Yogyakarta", "D. Pengenaan pajak pintu", "E. Pembangunan pabrik milik Belanda"],
+                answer: 1
+            },
+            {
+                question: "11. Tokoh yang memimpin Aceh dalam perang melawan Belanda adalah…",
+                options: ["A. Sentot Alibasyah", "B. Tuanku Imam Bonjol", "C. Cut Nyak Dien", "D. Pattimura", "E. Sultan Hasanuddin"],
+                answer: 2
+            },
+            {
+                question: "12. Perang Padri awalnya merupakan konflik internal antara…",
+                options: ["A. Kaum ulama dan adat", "B. Adat dan kerajaan", "C. Kaum pedagang dan bangsawan", "D. Ulama dan VOC", "E. Petani dan bangsawan"],
+                answer: 0
+            },
+            {
+                question: "13. Perang Tondano terjadi di wilayah…",
+                options: ["A. Sulawesi Selatan", "B. Sulawesi Utara", "C. Maluku", "D. Jawa Barat", "E. Kalimantan Timur"],
+                answer: 1
+            },
+            {
+                question: "14. Perang melawan kongsi dagang VOC banyak dipicu oleh…",
+                options: ["A. Penolakan upeti kerajaan", "B. Tindakan monopoli dan keserakahan VOC", "C. Sengketa wilayah antar kerajaan", "D. Penarikan bea cukai tinggi", "E. Penolakan penyebaran agama"],
+                answer: 1
+            },
+            {
+                question: "15. Hasil perjanjian Gianti 1755 adalah…",
+                options: ["A. Kerajaan Mataram jatuh ke tangan VOC", "B. VOC menguasai seluruh Jawa", "C. Mataram terpecah menjadi Yogyakarta dan Surakarta", "D. Yogyakarta dibubarkan", "E. Surakarta dikuasai Inggris"],
+                answer: 2
+            },
+            {
+                question: "16. Kebijakan Raffles yang terkenal adalah…",
+                options: ["A. Tanam paksa", "B. Sistem sewa tanah (landrent)", "C. Sistem perbudakan", "D. Monopoli rempah", "E. Penyerahan wajib"],
+                answer: 1
+            },
+            {
+                question: "17. Dampak ekonomi kolonialisme bagi Indonesia adalah…",
+                options: ["A. Petani semakin sejahtera", "B. Pemerintah kolonial rugi besar", "C. Tanah-tanah subur menjadi milik perusahaan asing", "D. Indonesia berhasil menjadi negara industri", "E. Harga komoditas rakyat semakin mahal"],
+                answer: 2
+            },
+            {
+                question: "18. Dampak sosial budaya kolonialisme adalah…",
+                options: ["A. Lahirnya kaum terpelajar Indonesia", "B. Hilangnya sistem kasta", "C. Tumbuhnya industri film", "D. Munculnya perdagangan bebas", "E. Hilangnya bahasa daerah"],
+                answer: 0
+            },
+            {
+                question: "19. Tokoh yang berjasa dalam pelaksanaan Politik Etis adalah…",
+                options: ["A. Van den Bosch", "B. Conrad Theodor van Deventer", "C. Herman Daendels", "D. Coen", "E. Pieter Both"],
+                answer: 1
+            },
+            {
+                question: "20. Dampak pendidikan kolonial adalah…",
+                options: ["A. Semua rakyat mendapat pendidikan tinggi", "B. Lahir generasi elit terdidik", "C. Pendidikan merata sampai pedalaman", "D. Sekolah tradisional berkembang pesat", "E. Bahasa Indonesia dilarang digunakan"],
+                answer: 1
+            },
+            {
+                question: "21. Sumpah Pemuda lahir pada tanggal…",
+                options: ["A. 17 Agustus 1945", "B. 28 Oktober 1928", "C. 20 Mei 1908", "D. 1 Juni 1945", "E. 14 Agustus 1945"],
+                answer: 1
+            },
+            {
+                question: "22. Sumpah Pemuda dilaksanakan di kota…",
+                options: ["A. Surabaya", "B. Bandung", "C. Batavia", "D. Semarang", "E. Yogyakarta"],
+                answer: 2
+            },
+            {
+                question: "23. Rumusan Sumpah Pemuda terdiri dari…",
+                options: ["A. 1 butir", "B. 2 butir", "C. 3 butir", "D. 4 butir", "E. 5 butir"],
+                answer: 2
+            },
+            {
+                question: "24. Makna utama Sumpah Pemuda adalah…",
+                options: ["A. Mendirikan negara baru", "B. Menghapus kerajaan", "C. Menegaskan persatuan identitas bangsa Indonesia", "D. Membangun kekuatan militer", "E. Memerangi pemerintah kolonial"],
+                answer: 2
+            },
+            {
+                question: "25. Bahasa pemersatu yang ditetapkan dalam Sumpah Pemuda adalah…",
+                options: ["A. Bahasa Jawa", "B. Bahasa Sunda", "C. Melayu", "D. Indonesia", "E. Melayu-Indonesia"],
+                answer: 4
+            },
+            {
+                question: "26. Organisasi kepemudaan yang mencetuskan semangat persatuan adalah…",
+                options: ["A. Boedi Oetomo", "B. Jong Java", "C. Sarekat Islam", "D. PNI", "E. Indische Partij"],
+                answer: 1
+            },
+            {
+                question: "27. Lagu Indonesia Raya pertama kali diperdengarkan pada…",
+                options: ["A. Kongres Pemuda I", "B. Kongres Pemuda II", "C. Upacara kemerdekaan", "D. Sidang BPUPKI", "E. Rapat Boedi Oetomo"],
+                answer: 1
+            },
+            {
+                question: "28. Sumpah Pemuda mempengaruhi perjuangan kemerdekaan dengan cara…",
+                options: ["A. Menghapus identitas daerah", "B. Menguatkan rasa nasionalisme", "C. Mengharuskan pemuda berperang", "D. Membentuk negara federal", "E. Menutup organizasi pelajar"],
+                answer: 1
+            },
+            {
+                question: "29. Identitas kebangsaan Indonesia terbentuk melalui…",
+                options: ["A. Cara kolonial", "B. Proses sejarah yang panjang", "C. Hasil perjanjian dengan Belanda", "D. Paksaan penjajah", "E. Ketetapan VOC"],
+                answer: 1
+            },
+            {
+                question: "30. Faktor yang mendorong munculnya jati diri keindonesiaan adalah…",
+                options: ["A. Konflik antarsuku", "B. Kemajuan pendidikan dan pers", "C. Penutupan sekolah", "D. Penjajahan Inggris", "E. Perang saudara"],
+                answer: 1
+            },
+            {
+                question: "31. Dampak politik kolonialisme yang paling terlihat adalah…",
+                options: ["A. Rakyat bebas memilih pemimpin", "B. Sentralisasi kekuasaan di tangan kolonial", "C. Penghapusan pajak", "D. Perkembangan demokrasi", "E. Kerajaan diperkuat"],
+                answer: 1
+            },
+            {
+                question: "32. Dampak ekonomi kolonialisme adalah…",
+                options: ["A. Harga barang-barang turun", "B. Perkebunan rakyat berkembang", "C. Eksploitasi sumber daya alam", "D. Perdagangan internasional dilarang", "E. Kemiskinan menurun"],
+                answer: 2
+            },
+            {
+                question: "33. Dampak sosial kolonialisme adalah…",
+                options: ["A. Munculnya stratifikasi sosial rasial", "B. Kesetaraan hak untuk semua", "C. Tidak ada perbedaan kelas", "D. Rakyat bebas berorganisasi", "E. Kerajaan semakin kuat"],
+                answer: 0
+            },
+            {
+                question: "34. Politik Etis terdiri dari 3 program yaitu…",
+                options: ["A. Edukasi, Irigasi, Migrasi", "B. Edukasi, Militer, Irigasi", "C. Irigasi, Modernisasi, Militer", "D. Edukasi, Ekonomi, Migrasi", "E. Migrasi, Modernisasi, Edukasi"],
+                answer: 0
+            },
+            {
+                question: "35. Penjajahan Belanda di Indonesia berlangsung selama…",
+                options: ["A. 50 tahun", "B. 100 tahun", "C. 200 tahun", "D. 350 tahun (secara simbolik)", "E. 500 tahun"],
+                answer: 3
+            },
+            {
+                question: "36. Perlawanan rakyat Banten dipimpin oleh…",
+                options: ["A. Sultan Hasanuddin", "B. Sultan Ageng Tirtayasa", "C. Pangeran Jayakarta", "D. Diponegoro", "E. Pattimura"],
+                answer: 1
+            },
+            {
+                question: "37. Perlawanan rakyat Bali terhadap Belanda dikenal dengan…",
+                options: ["A. Perang Lombok", "B. Puputan Badung", "C. Perang Tapa", "D. Perang Banjar", "E. Perang Tondano"],
+                answer: 1
+            },
+            {
+                question: "38. Perang Banjar terjadi di wilayah…",
+                options: ["A. Kalimantan Selatan", "B. Sulawesi Selatan", "C. Maluku", "D. Nusa Tenggara", "E. Jawa Barat"],
+                answer: 0
+            },
+            {
+                question: "39. Salah satu ciri imperialisme modern adalah…",
+                options: ["A. Eksploitasi sumber daya untuk kepentingan ekonomi industri", "B. Pembentukan kerajaan baru", "C. Perdagangan rempah", "D. Penjajahan oleh kerajaan kecil", "E. Tidak adanya intervensi politik"],
+                answer: 0
+            },
+            {
+                question: "40. Dampak Sumpah Pemuda bagi bangsa Indonesia adalah…",
+                options: ["A. Melemahnya persatuan", "B. Memperkuat identitas bangsa", "C. Meningkatkan ketergantungan pada kolonial", "D. Menghapus organizasi pemuda", "E. Menutup sekolah-sekolah"],
+                answer: 1
+            }
+        ];
+
+        // Variabel global
+        let currentQuestion = 0;
+        let score = 0;
+        let studentAnswers = [];
+        let studentName = "";
+        let studentClass = "";
+
+        // Fungsi untuk menampilkan screen tertentu
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Fungsi memulai petualangan
+        function startAdventure() {
+            studentName = document.getElementById('studentName').value.trim();
+            studentClass = document.getElementById('studentClass').value.trim();
+            
+            if (!studentName || !studentClass) {
+                alert('Harap isi nama dan kelas terlebih dahulu!');
+                return;
+            }
+            
+            // Reset game state
+            currentQuestion = 0;
+            score = 0;
+            studentAnswers = [];
+            
+            // Update info siswa
+            document.getElementById('studentInfo').textContent = 
+                `Petualang: ${studentName} | Kelas: ${studentClass}`;
+            
+            showScreen('gameScreen');
+            loadQuestion();
+        }
+
+        // Fungsi memuat pertanyaan
+        function loadQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('progressText').textContent = 
+                `Pertanyaan ${currentQuestion + 1}/${questions.length}`;
+            document.getElementById('progress').style.width = 
+                `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            // Update adventure step
+            const adventureSteps = [
+                "🏞️ Memulai perjalanan di Nusantara...",
+                "⚓ Menjelajahi lautan mencari rempah...",
+                "🏰 Mengunjungi kerajaan-kerajaan...",
+                "⚔️ Terlibat dalam perlawanan...",
+                "📜 Mempelajari sejarah kemerdekaan...",
+                "🎓 Memahami dampak kolonialisme...",
+                "🇮🇩 Menelusuri perjuangan kemerdekaan...",
+                "🏆 Menyelesaikan petualangan sejarah!"
+            ];
+            const stepIndex = Math.floor(currentQuestion / (questions.length / adventureSteps.length));
+            document.getElementById('adventureStep').textContent = adventureSteps[stepIndex];
+            
+            // Load options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Reset next button
+            document.getElementById('nextButton').disabled = true;
+        }
+
+        // Fungsi memilih opsi
+        function selectOption(optionIndex) {
+            // Remove selected class from all options
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            document.querySelectorAll('.option')[optionIndex].classList.add('selected');
+            
+            // Enable next button
+            document.getElementById('nextButton').disabled = false;
+            
+            // Store answer
+            studentAnswers[currentQuestion] = optionIndex;
+        }
+
+        // Fungsi pertanyaan berikutnya
+        function nextQuestion() {
+            // Check if answer is correct
+            if (studentAnswers[currentQuestion] === questions[currentQuestion].answer) {
+                score++;
+            }
+            
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Fungsi menampilkan hasil
+        function showResults() {
+            const percentage = (score / questions.length) * 100;
+            
+            document.getElementById('studentResultInfo').textContent = 
+                `Petualang: ${studentName} | Kelas: ${studentClass}`;
+            document.getElementById('finalScore').textContent = `${score}/${questions.length}`;
+            document.getElementById('scorePercentage').textContent = `${percentage.toFixed(1)}%`;
+            document.getElementById('correctAnswers').textContent = score;
+            document.getElementById('wrongAnswers').textContent = questions.length - score;
+            document.getElementById('percentage').textContent = `${percentage.toFixed(1)}%`;
+            
+            let remark = "";
+            let status = "";
+            
+            if (percentage >= 80) {
+                remark = "🎉 Excellent! Kamu benar-benar menguasai sejarah Indonesia!";
+                status = "Sangat Baik";
+            } else if (percentage >= 70) {
+                remark = "👍 Bagus! Pengetahuan sejarahmu cukup solid.";
+                status = "Baik";
+            } else if (percentage >= 60) {
+                remark = "💪 Cukup! Tingkatkan lagi belajarnya.";
+                status = "Cukup";
+            } else {
+                remark = "📚 Perlu belajar lebih giat lagi. Jangan menyerah!";
+                status = "Perlu Perbaikan";
+            }
+            
+            document.getElementById('scoreRemark').textContent = remark;
+            document.getElementById('status').textContent = status;
+            
+            // Save results to localStorage
+            saveResults();
+            
+            showScreen('resultsScreen');
+        }
+
+        // Fungsi menyimpan hasil
+        function saveResults() {
+            const results = JSON.parse(localStorage.getItem('examResults') || '[]');
+            const newResult = {
+                name: studentName,
+                class: studentClass,
+                score: score,
+                total: questions.length,
+                percentage: (score / questions.length) * 100,
+                date: new Date().toLocaleString('id-ID'),
+                answers: studentAnswers
+            };
+            
+            results.push(newResult);
+            localStorage.setItem('examResults', JSON.stringify(results));
+        }
+
+        // Fungsi login guru
+        function teacherLogin() {
+            const username = document.getElementById('teacherUsername').value;
+            const password = document.getElementById('teacherPassword').value;
+            
+            if (username === 'guru' && password === 'sejarah') {
+                loadTeacherDashboard();
+                showScreen('teacherDashboard');
+            } else {
+                alert('Username atau password salah!');
+            }
+        }
+
+        // Fungsi memuat dashboard guru
+        function loadTeacherDashboard() {
+            const results = JSON.parse(localStorage.getItem('examResults') || '[]');
+            const tableBody = document.getElementById('resultsTable');
+            
+            tableBody.innerHTML = '';
+            
+            if (results.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada data hasil ujian</td></tr>';
+                return;
+            }
+            
+            results.forEach(result => {
+                const row = document.createElement('tr');
+                
+                let status = "";
+                let statusColor = "";
+                
+                if (result.percentage >= 80) {
+                    status = "Sangat Baik";
+                    statusColor = "#27ae60";
+                } else if (result.percentage >= 70) {
+                    status = "Baik";
+                    statusColor = "#3498db";
+                } else if (result.percentage >= 60) {
+                    status = "Cukup";
+                    statusColor = "#f39c12";
+                } else {
+                    status = "Perlu Perbaikan";
+                    statusColor = "#e74c3c";
+                }
+                
+                row.innerHTML = `
+                    <td>${result.name}</td>
+                    <td>${result.class}</td>
+                    <td>${result.score}/${result.total}</td>
+                    <td>${result.date}</td>
+                    <td style="color: ${statusColor}; font-weight: bold;">${status}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Fungsi refresh data
+        function refreshResults() {
+            loadTeacherDashboard();
+            alert('Data berhasil di-refresh!');
+        }
+
+        // Fungsi melihat detail jawaban
+        function showAnswerDetails() {
+            const detailsContainer = document.getElementById('answerDetails');
+            detailsContainer.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = studentAnswers[index];
+                const isCorrect = userAnswer === question.answer;
+                
+                const detailElement = document.createElement('div');
+                detailElement.className = 'question-container';
+                detailElement.style.marginBottom = '15px';
+                detailElement.style.borderLeftColor = isCorrect ? '#27ae60' : '#e74c3c';
+                
+                detailElement.innerHTML = `
+                    <div class="question-text">${question.question}</div>
+                    <div style="margin: 10px 0;">
+                        <strong>Jawaban Anda:</strong> 
+                        <span style="color: ${isCorrect ? '#27ae60' : '#e74c3c'}">
+                            ${userAnswer !== undefined ? question.options[userAnswer] : 'Tidak dijawab'}
+                        </span>
+                    </div>
+                    <div style="margin: 10px 0;">
+                        <strong>Jawaban Benar:</strong> 
+                        <span style="color: #27ae60">${question.options[question.answer]}</span>
+                    </div>
+                    <div style="margin: 10px 0; color: ${isCorrect ? '#27ae60' : '#e74c3c'}; font-weight: bold;">
+                        ${isCorrect ? '✅ Benar' : '❌ Salah'}
+                    </div>
+                `;
+                
+                detailsContainer.appendChild(detailElement);
+            });
+            
+            showScreen('answerDetailsScreen');
+        }
+
+        // Fungsi restart game
+        function restartGame() {
+            showScreen('loginScreen');
+        }
+
+        // Event listener untuk Enter key
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enter key untuk login siswa
+            document.getElementById('studentName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') startAdventure();
+            });
+            
+            document.getElementById('studentClass').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') startAdventure();
+            });
+            
+            // Enter key untuk login guru
+            document.getElementById('teacherUsername').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') teacherLogin();
+            });
+            
+            document.getElementById('teacherPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') teacherLogin();
+            });
+        });
+    </script>
+</body>
+</html>
